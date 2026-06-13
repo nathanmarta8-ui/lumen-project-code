@@ -14,10 +14,11 @@
      form until your Beehiiv account is ready.
   ------------------------------------------------------------ */
   var CONFIG = {
-    newsletterEmbedUrl: '',
-    siteUrl: 'https://readlumen.site'
-  };
-
+  newsletterFormAction: 'https://app.kit.com/forms/9558996/subscriptions',
+  newsletterEmailField: 'email_address',
+  newsletterEmbedUrl: '',
+  siteUrl: 'https://readlumen.site'
+};
   var CATEGORIES = [
     { name: 'Medicine',       slug: 'medicine',       summary: 'Approvals, scale milestones and trial results at the inflection point — the moment research becomes treatment.', stat: 'Tracking the moments care actually changes' },
     { name: 'Biotechnology',  slug: 'biotechnology',  summary: 'Gene therapy, CRISPR and synthetic biology, covered at mechanism level — and only with human data.', stat: 'Human data required, always' },
