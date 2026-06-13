@@ -14,8 +14,8 @@
      form until your Beehiiv account is ready.
   ------------------------------------------------------------ */
   var CONFIG = {
-  newsletterFormAction: 'https://app.kit.com/forms/9558996/subscriptions',
-  newsletterEmailField: 'email_address',
+  newsletterFormAction: 'https://buttondown.com/api/emails/embed-subscribe/stanley_martanegara',
+  newsletterEmailField: 'email',
   newsletterEmbedUrl: '',
   siteUrl: 'https://readlumen.site'
 };
