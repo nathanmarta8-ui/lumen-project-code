@@ -16,7 +16,7 @@
   var CONFIG = {
   newsletterFormAction: 'https://buttondown.com/api/emails/embed-subscribe/stanley_martanegara',
   newsletterEmailField: 'email',
-  newsletterEmbedUrl: '',
+  newsletterEmbedUrl: 'https://buttondown.com/api/emails/embed-subscribe/stanley_martanegara',
   siteUrl: 'https://readlumen.site'
 };
   var CATEGORIES = [
