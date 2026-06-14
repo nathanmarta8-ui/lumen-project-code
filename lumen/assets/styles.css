@@ -379,6 +379,7 @@ a:hover .arrow-btn, .arrow-btn:hover { background: var(--accent-dark); transform
 .newsletter .proof { font-size: 12px; color: var(--text-muted); }
 .newsletter .ok { color: var(--success); font-weight: 500; font-size: 14px; }
 .nl-embed { border: none; width: 100%; min-height: 120px; border-radius: 8px; }
+.bd-sink { display: none; }
 
 /* dormant ad containers (activated only when AdSense is added) */
 .ad-slot { display: none; }
