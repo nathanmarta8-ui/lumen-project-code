@@ -38,11 +38,11 @@
   ];
 
   var REACTIONS = [
-    { key: 'fascinating', emoji: '\uD83D\uDD2C', label: 'Fascinating' },
-    { key: 'important',   emoji: '\uD83D\uDCA1', label: 'Important' },
-    { key: 'global',      emoji: '\uD83C\uDF0D', label: 'Global impact' },
-    { key: 'hope',        emoji: '\u2764\uFE0F', label: 'Gives me hope' },
-    { key: 'share',       emoji: '\uD83D\uDE4C', label: 'Share-worthy' }
+    { key: 'fascinating', icon: 'microscope', label: 'Fascinating' },
+    { key: 'important',   icon: 'spark',      label: 'Important' },
+    { key: 'global',      icon: 'globe',      label: 'Global impact' },
+    { key: 'hope',        icon: 'heart',      label: 'Gives me hope' },
+    { key: 'share',       icon: 'share',      label: 'Share-worthy' }
   ];
 
   /* ---------- data ---------- */
@@ -97,13 +97,66 @@
     return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   }
   function num(n) { return Number(n || 0).toLocaleString('en-US'); }
-  function storyUrl(s) { return 'story.html?slug=' + encodeURIComponent(s.slug); }
+
+  /* slug hygiene: a data-entry slug like "/story/foo" or "foo/" can't break URLs */
+  function cleanSlug(s) {
+    return String(s == null ? '' : s).split('?')[0].split('#')[0]
+      .split('/').filter(Boolean).pop() || '';
+  }
+  /* canonical clean URL per story */
+  function storyUrl(s) { return '/story/' + encodeURIComponent(cleanSlug(s.slug)); }
+  function storyPath(slug) { return '/story/' + encodeURIComponent(cleanSlug(slug)); }
+
+  /* inline line-icons (1.5px stroke, currentColor) — no emoji, no dependency */
+  var ICONS = {
+    search:     '<path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-3.5-3.5"/>',
+    arrow:      '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    microscope: '<path d="M6 18h12M9 18V8a3 3 0 0 1 6 0M8 21h8M12 4v1"/>',
+    spark:      '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>',
+    globe:      '<path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/>',
+    heart:      '<path d="M12 20s-7-4.4-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 3.5C19 15.6 12 20 12 20z"/>',
+    share:      '<path d="M12 16V4M8 8l4-4 4 4M5 14v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5"/>'
+  };
+  function icon(name, size) {
+    var s = size || 16;
+    return '<svg class="ic" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" ' +
+      'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      (ICONS[name] || '') + '</svg>';
+  }
+
+  /* strip paste cruft (inline styles, Word/Pages classes, empty spans) from body HTML;
+     keep only semantic structure. Runs in-browser via a detached element. */
+  function sanitizeBody(htmlStr) {
+    if (!htmlStr) return '';
+    var allow = { P: 1, BR: 1, STRONG: 1, B: 1, EM: 1, I: 1, A: 1, UL: 1, OL: 1, LI: 1, BLOCKQUOTE: 1, H2: 1, H3: 1 };
+    var box = document.createElement('div');
+    box.innerHTML = htmlStr;
+    (function walk(node) {
+      var kids = Array.prototype.slice.call(node.childNodes);
+      kids.forEach(function (n) {
+        if (n.nodeType === 1) {
+          walk(n);
+          if (!allow[n.tagName]) {
+            while (n.firstChild) node.insertBefore(n.firstChild, n);
+            node.removeChild(n);
+            return;
+          }
+          var keep = (n.tagName === 'A') ? ['href'] : [];
+          Array.prototype.slice.call(n.attributes).forEach(function (a) {
+            if (keep.indexOf(a.name) === -1) n.removeAttribute(a.name);
+          });
+          if (n.tagName === 'A') { n.setAttribute('rel', 'noopener'); }
+        }
+      });
+    })(box);
+    return box.innerHTML;
+  }
 
   function metaStrip(s, short) {
     return '<div class="meta">' +
-      '<span>\uD83D\uDEE1\uFE0F ' + esc(s.sourceType || 'Peer-reviewed') + '</span>' +
+      '<span class="src-tag">' + esc(s.sourceType || 'Peer-reviewed') + '</span>' +
       (!short && s.journal ? '<span class="sep"></span><span>' + esc(s.journal) + '</span>' : '') +
-      '<span class="sep"></span><span>\u23F1 ' + esc(s.readTime || 3) + ' min</span>' +
+      '<span class="sep"></span><span>' + esc(s.readTime || 3) + ' min read</span>' +
       '<span class="sep"></span><span class="impact"><span class="impact-dot"></span>' + esc(s.impact) + '/10</span>' +
       '</div>';
   }
@@ -184,7 +237,7 @@
       '<a class="nav-logo" href="index.html">Lumen</a>' +
       '<div class="nav-links">' + links + '</div>' +
       '<div class="nav-right">' +
-      '<button class="nav-search" id="open-search" aria-label="Search stories" title="Search ( / )">\u2315</button>' +
+      '<button class="nav-search" id="open-search" aria-label="Search stories" title="Search ( / )">' + icon('search') + '</button>' +
       '<a class="btn btn-sm" href="#newsletter">Newsletter</a>' +
       '<a class="nav-signin" href="#newsletter">Subscribe</a>' +
       '</div></div></nav>';
@@ -599,7 +652,7 @@
     var stories = allStories();
     mountChrome(null, stories);
     var root = document.getElementById('page');
-    var slug = new URLSearchParams(location.search).get('slug');
+    var slug = window.__LUMEN_SLUG__ || new URLSearchParams(location.search).get('slug') || cleanSlug(location.pathname);
     var s = stories.filter(function (x) { return x.slug === slug; })[0];
 
     if (!s) {
@@ -632,14 +685,13 @@
     html += '<h1 class="article-headline">' + hlHead(s.headline) + '</h1>';
     html += '<p class="article-lede">' + esc(s.lede) + '</p>';
     html += '<div class="article-meta-row"><div class="meta">' +
-      '<span>\uD83D\uDEE1\uFE0F ' + esc(s.sourceType) + '</span><span class="sep"></span>' +
+      '<span class="src-tag">' + esc(s.sourceType) + '</span><span class="sep"></span>' +
       '<span>' + fmtDate(s.publishDate) + '</span><span class="sep"></span>' +
-      '<span>\u23F1 ' + esc(s.readTime || 3) + ' min read</span><span class="sep"></span>' +
-      '<span class="impact"><span class="impact-dot"></span>Impact ' + esc(s.impact) + '/10</span></div>' +
-      '<span class="badge">\u270D\uFE0F Human Written</span></div>';
+      '<span>' + esc(s.readTime || 3) + ' min read</span><span class="sep"></span>' +
+      '<span class="impact"><span class="impact-dot"></span>Impact ' + esc(s.impact) + '/10</span></div></div>';
 
     var readers = Number(s.readersToday) || 0;
-    if (readers) html += '<p class="meta" style="margin-bottom:24px"><span style="color:var(--success)">\u2191</span> ' + num(readers) + ' people read this today</p>';
+    if (readers) html += '<p class="meta readers-line" style="margin-bottom:24px">' + num(readers) + ' people read this today</p>';
 
     if (s.heroImage) {
       html += '<figure><div class="article-hero"><img src="' + esc(s.heroImage) + '" alt="' + esc(s.imageCaption || plainHead(s.headline)) + '"></div>' +
@@ -648,7 +700,7 @@
 
     html += '<div class="article-body">';
     if (s.whyItMatters) html += '<div class="why-matters"><strong>Why it matters \u2014</strong> ' + esc(s.whyItMatters) + '</div>';
-    html += s.bodyHtml || '<p>' + esc(s.lede) + '</p>';
+    html += s.bodyHtml ? sanitizeBody(s.bodyHtml) : '<p>' + esc(s.lede) + '</p>';
     if (s.pullQuote) {
       html += '<blockquote>\u201C' + esc(s.pullQuote) + '\u201D' +
         '<p class="quote-attr">\u2014 ' + esc(s.pullQuoteAttribution || '') + '</p></blockquote>';
@@ -673,7 +725,7 @@
     html += '<p class="source-line">Source: ' + (s.journalUrl ? '<a class="uline" href="' + esc(s.journalUrl) + '" rel="noopener" target="_blank">' + esc(s.journal) + '</a>' : esc(s.journal || '')) +
       ' \u00B7 ' + esc(s.author || 'Lumen Editorial') + ' \u00B7 ' + fmtDate(s.publishDate) + '</p>';
 
-    html += '<details class="verify-panel"><summary>\uD83D\uDEE1\uFE0F How we verified this</summary><div class="verify-body"><dl>' +
+    html += '<details class="verify-panel"><summary>How we verified this</summary><div class="verify-body"><dl>' +
       '<dt>Source</dt><dd>' + esc(s.sourceType) + (s.journal ? ' \u00B7 ' + esc(s.journal) : '') + '</dd>' +
       (s.trialPhase ? '<dt>Trial phase</dt><dd>' + esc(s.trialPhase) + (s.nctId ? ' \u00B7 <a href="https://clinicaltrials.gov/study/' + esc(s.nctId) + '" rel="noopener" target="_blank">ClinicalTrials.gov ' + esc(s.nctId) + '</a>' : '') + '</dd>' : '') +
       '<dt>Lumen\u2019s five-point filter</dt><dd>Every Lumen story must pass checks on source tier, trial phase, reported patient numbers, absolute effect size, and disease burden before publishing. <a class="uline" href="about.html">Read our standards \u2192</a></dd>' +
@@ -684,7 +736,7 @@
 
     html += '<div class="reactions">' + REACTIONS.map(function (r) {
       var c = (s.reactions && s.reactions[r.key]) || 0;
-      return '<button class="reaction" data-react="' + r.key + '">' + r.emoji + ' ' + r.label + (c ? ' <span class="count">' + num(c) + '</span>' : '') + '</button>';
+      return '<button class="reaction" data-react="' + r.key + '">' + icon(r.icon) + '<span>' + r.label + '</span>' + (c ? '<span class="count">' + num(c) + '</span>' : '') + '</button>';
     }).join('') + '</div>';
     html += '<p class="reaction-note" id="react-note">Sign in to react. Reader accounts are coming soon.</p>';
 
@@ -707,7 +759,7 @@
     (function () {
       var sb = document.getElementById('share-bar');
       if (!sb) return;
-      var url = CONFIG.siteUrl + '/story.html?slug=' + encodeURIComponent(s.slug);
+      var url = CONFIG.siteUrl + storyUrl(s);
       var title = plainHead(s.headline);
       var eu = encodeURIComponent(url), et = encodeURIComponent(title);
       var btns = [];
@@ -729,7 +781,7 @@
         if (n) { navigator.share({ title: title, url: url }).catch(function () {}); }
         if (c) {
           navigator.clipboard && navigator.clipboard.writeText(url);
-          c.textContent = 'Copied \u2713';
+          c.textContent = 'Copied';
           setTimeout(function () { c.textContent = 'Copy link'; }, 1800);
         }
       });
@@ -791,7 +843,7 @@
         if (prefs.indexOf(cat.name) === -1) prefs.push(cat.name);
         localStorage.setItem('lumen_follows', JSON.stringify(prefs));
       } catch (e) {}
-      this.textContent = 'Following \u2713';
+      this.textContent = 'Following';
       this.classList.add('active');
     });
     initReveal();
