@@ -24,7 +24,13 @@
     newsletterFormAction: '',
     newsletterEmailField: 'email_address',
     newsletterEmbedUrl: '',
-    siteUrl: 'https://readlumen.site'
+    siteUrl: 'https://readlumen.site',
+    /* Supabase (reactions). Project Settings → API:
+       supabaseUrl = Project URL (https://xxxx.supabase.co)
+       supabaseAnonKey = the "anon"/"publishable" public key — safe to expose here,
+       it is protected by Row Level Security. NEVER paste the service_role/secret key. */
+    supabaseUrl: 'https://nfwaqoprnbjgrozasmyb.supabase.co',
+    supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5md2Fxb3BybmJqZ3JvemFzbXliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDA1MzIsImV4cCI6MjA5NzAxNjUzMn0.JVJ9QjvKUTZnI-9ZL_ujH-TChxkgfquCzrQnxXKRyz0'
   };
 
   var CATEGORIES = [
@@ -98,10 +104,47 @@
   }
   function num(n) { return Number(n || 0).toLocaleString('en-US'); }
 
-  /* author display: masthead placeholders ("Lumen …") show as the named publisher */
+  /* ---------- Supabase reactions (optional; off until configured) ---------- */
+  function supaEnabled() { return !!(CONFIG.supabaseUrl && CONFIG.supabaseAnonKey); }
+  function supaHeaders() {
+    return { apikey: CONFIG.supabaseAnonKey, Authorization: 'Bearer ' + CONFIG.supabaseAnonKey, 'Content-Type': 'application/json' };
+  }
+  function fetchReactionCounts(slug) {
+    if (!supaEnabled()) return Promise.resolve(null);
+    var url = CONFIG.supabaseUrl + '/rest/v1/story_reactions?slug=eq.' + encodeURIComponent(slug) + '&select=reaction,count';
+    return fetch(url, { headers: supaHeaders() })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (rows) {
+        if (!rows) return null;
+        var map = {};
+        rows.forEach(function (row) { map[row.reaction] = row.count; });
+        return map;
+      })
+      .catch(function () { return null; });
+  }
+  function incrementReaction(slug, reaction) {
+    if (!supaEnabled()) return Promise.resolve(null);
+    return fetch(CONFIG.supabaseUrl + '/rest/v1/rpc/increment_reaction', {
+      method: 'POST', headers: supaHeaders(),
+      body: JSON.stringify({ p_slug: slug, p_reaction: reaction })
+    }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+  }
+  function reactedKeys(slug) {
+    try { return JSON.parse(localStorage.getItem('lumen_reacted_' + slug) || '[]'); } catch (e) { return []; }
+  }
+  function markReacted(slug, key) {
+    var k = reactedKeys(slug);
+    if (k.indexOf(key) === -1) k.push(key);
+    try { localStorage.setItem('lumen_reacted_' + slug, JSON.stringify(k)); } catch (e) {}
+  }
+
+  /* author display: masthead placeholders and short forms of the publisher's
+     own name normalize to the canonical full name */
   function realAuthor(s) {
     var a = ((s && s.author) || '').trim();
-    return (!a || a.toLowerCase().indexOf('lumen') === 0) ? 'Nathan Stanley Martanegara' : a;
+    var low = a.toLowerCase();
+    if (!a || low.indexOf('lumen') === 0 || low.indexOf('nathan stanley') === 0) return 'Nathan Stanley Martanegara';
+    return a;
   }
 
   /* slug hygiene: a data-entry slug like "/story/foo" or "foo/" can't break URLs */
@@ -158,9 +201,10 @@
     return box.innerHTML;
   }
 
-  function metaStrip(s, short) {
+  function metaStrip(s, short, withAuthor) {
     return '<div class="meta">' +
       '<span class="src-tag">' + esc(s.sourceType || 'Peer-reviewed') + '</span>' +
+      (withAuthor ? '<span class="sep"></span><span class="byline">By ' + esc(realAuthor(s)) + '</span>' : '') +
       (!short && s.journal ? '<span class="sep"></span><span>' + esc(s.journal) + '</span>' : '') +
       '<span class="sep"></span><span>' + esc(s.readTime || 3) + ' min read</span>' +
       '<span class="sep"></span><span class="impact"><span class="impact-dot"></span>' + esc(s.impact) + '/10</span>' +
@@ -493,7 +537,7 @@
         '<span class="cat-label">' + esc(s.category) + (s.featured ? ' \u00B7 Lead story' : (s.breaking ? ' \u00B7 Breaking' : '')) + '</span>' +
         '<h1><a href="' + storyUrl(s) + '">' + hlHead(s.headline) + '</a></h1>' +
         '<p class="lede">' + esc(s.lede) + '</p>' +
-        '<div class="lead-foot">' + metaStrip(s) +
+        '<div class="lead-foot">' + metaStrip(s, false, true) +
         '<a class="btn btn-sm" href="' + storyUrl(s) + '">Read the breakthrough \u2192</a></div>' +
         '</div>';
     }
@@ -776,9 +820,9 @@
 
     html += '<div class="reactions">' + REACTIONS.map(function (r) {
       var c = (s.reactions && s.reactions[r.key]) || 0;
-      return '<button class="reaction" data-react="' + r.key + '">' + icon(r.icon) + '<span>' + r.label + '</span>' + (c ? '<span class="count">' + num(c) + '</span>' : '') + '</button>';
+      return '<button class="reaction" data-react="' + r.key + '">' + icon(r.icon) + '<span>' + r.label + '</span><span class="count" data-rcount="' + r.key + '">' + (c ? num(c) : '') + '</span></button>';
     }).join('') + '</div>';
-    html += '<p class="reaction-note" id="react-note">Sign in to react. Reader accounts are coming soon.</p>';
+    html += '<p class="reaction-note" id="react-note"' + (supaEnabled() ? ' hidden' : '') + '>Reactions are anonymous and counted site-wide.</p>';
 
     html += '<div class="related"><h2>' + relatedTitle + '</h2><div class="compact-grid">' + related.map(compactCardHTML).join('') + '</div></div>';
 
@@ -806,7 +850,7 @@
       var eu = encodeURIComponent(url), et = encodeURIComponent(title);
       var btns = [];
       if (navigator.share) {
-        btns.push('<button class="share-btn primary" data-share="native">\u2191 Share</button>');
+        btns.push('<button class="share-btn primary" data-share="native">' + icon('share') + '<span>Share</span></button>');
       }
       btns.push(
         '<a class="share-btn" href="https://twitter.com/intent/tweet?text=' + et + '&url=' + eu + '" target="_blank" rel="noopener">X</a>',
@@ -829,13 +873,39 @@
       });
     })();
 
-    root.addEventListener('click', function (e) {
-      var r = e.target.closest('.reaction');
-      if (r) {
-        r.classList.remove('popped'); void r.offsetWidth; r.classList.add('popped');
-        document.getElementById('react-note').textContent = 'Reactions need a reader account \u2014 accounts are coming soon. Counts shown are site-wide.';
+    /* reactions: live counts + one-per-device via Supabase (if configured) */
+    (function () {
+      var reacted = reactedKeys(s.slug);
+      reacted.forEach(function (k) {
+        var btn = root.querySelector('.reaction[data-react="' + k + '"]');
+        if (btn) btn.classList.add('reacted');
+      });
+      if (supaEnabled()) {
+        fetchReactionCounts(cleanSlug(s.slug)).then(function (map) {
+          if (!map) return;
+          Object.keys(map).forEach(function (k) {
+            var el = root.querySelector('.count[data-rcount="' + k + '"]');
+            if (el) el.textContent = map[k] ? num(map[k]) : '';
+          });
+        });
       }
-    });
+      root.addEventListener('click', function (e) {
+        var r = e.target.closest('.reaction');
+        if (!r) return;
+        var key = r.getAttribute('data-react');
+        r.classList.remove('popped'); void r.offsetWidth; r.classList.add('popped');
+        if (!supaEnabled()) return; /* not configured: animation only */
+        if (reactedKeys(s.slug).indexOf(key) !== -1) return; /* already reacted on this device */
+        markReacted(s.slug, key);
+        r.classList.add('reacted');
+        var el = r.querySelector('.count');
+        var optimistic = (parseInt((el.textContent || '0').replace(/[^0-9]/g, ''), 10) || 0) + 1;
+        if (el) el.textContent = num(optimistic);
+        incrementReaction(cleanSlug(s.slug), key).then(function (n) {
+          if (typeof n === 'number' && el) el.textContent = num(n);
+        });
+      });
+    })();
     initReveal();
   }
 
