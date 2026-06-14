@@ -249,6 +249,10 @@ function buildHomepage(stories) {
   let html = fs.readFileSync(file, 'utf8');
   // idempotency: strip any head block we injected on a previous build
   html = html.replace(/\s*<!--LUMEN-SSR-->[\s\S]*?<!--\/LUMEN-SSR-->/g, '');
+  // harden: make asset/script paths absolute so they resolve at any route depth
+  html = html
+    .replace(/(href|src)="assets\//g, '$1="/assets/')
+    .replace(/(href|src)="data\//g, '$1="/data/');
   const ordered = sortedStories(stories);
   const ssr = '<section class="ssr-home">' +
     '<h1>Lumen \u2014 Breakthroughs Brought to Light</h1>' +
