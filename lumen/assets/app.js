@@ -94,6 +94,7 @@
     var c = CATEGORIES.filter(function (c) { return c.name === name; })[0];
     return c ? c.slug : 'medicine';
   }
+  function catUrl(slug) { return '/category/' + slug; }
   function fmtDate(iso) {
     var d = new Date(iso);
     return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -311,7 +312,7 @@
   function navHTML(active) {
     var links = CATEGORIES.map(function (c) {
       var cur = active === c.slug ? ' aria-current="page"' : '';
-      return '<a href="category.html?cat=' + c.slug + '"' + cur + '>' + c.name + '</a>';
+      return '<a href="' + catUrl(c.slug) + '"' + cur + '>' + c.name + '</a>';
     }).join('');
     return '<nav class="nav" id="site-nav"><div class="nav-inner">' +
       '<a class="nav-logo" href="index.html">Lumen</a>' +
@@ -338,8 +339,8 @@
     return '<footer class="site-footer"><div class="container">' +
       '<div class="footer-grid">' +
       '<div><span class="footer-logo">Lumen</span><p class="footer-mission">Breakthroughs brought to light. The world\u2019s most important medical and technological advances, translated into clear, human stories.</p></div>' +
-      '<div><h4>Sections</h4>' + CATEGORIES.slice(0, 4).map(function (c) { return '<a href="category.html?cat=' + c.slug + '">' + c.name + '</a>'; }).join('') + '</div>' +
-      '<div><h4>More</h4>' + CATEGORIES.slice(4).map(function (c) { return '<a href="category.html?cat=' + c.slug + '">' + c.name + '</a>'; }).join('') + '</div>' +
+      '<div><h4>Sections</h4>' + CATEGORIES.slice(0, 4).map(function (c) { return '<a href="' + catUrl(c.slug) + '">' + c.name + '</a>'; }).join('') + '</div>' +
+      '<div><h4>More</h4>' + CATEGORIES.slice(4).map(function (c) { return '<a href="' + catUrl(c.slug) + '">' + c.name + '</a>'; }).join('') + '</div>' +
       '<div><h4>Lumen</h4><a href="about.html">About & standards</a><a href="corrections.html">Correction log</a><a href="privacy.html">Privacy</a><a href="#newsletter">Newsletter</a><a href="/feed.xml">RSS feed</a></div>' +
       '</div>' +
       '<div class="footer-bottom"><span>\u00A9 ' + year + ' Lumen \u00B7 readlumen.site</span>' +
@@ -601,7 +602,7 @@
       if (followed.length) {
         html += '<section class="section" style="padding-top:48px"><div class="section-head reveal" style="margin-bottom:18px">' +
           '<h2 class="section-title" style="font-size:22px">Because you follow ' + esc(follows.slice(0, 2).join(' & ')) + '</h2>' +
-          '<a class="follow-note" href="' + 'category.html?cat=' + catSlug(followed[0].category) + '">Manage topics \u2192</a></div>' +
+          '<a class="follow-note" href="' + catUrl(catSlug(followed[0].category)) + '">Manage topics \u2192</a></div>' +
           '<div class="compact-grid" style="margin-top:0">' + followed.map(compactCardHTML).join('') + '</div></section>';
       }
     }
@@ -652,7 +653,7 @@
     if (longevity.length || mental.length) {
       function miniList(title, slug, items) {
         return '<div class="reveal"><div class="section-head"><h2 class="section-title" style="font-size:24px">' + title + '</h2>' +
-          '<a class="uline" href="category.html?cat=' + slug + '" style="font-size:13px">View all \u2192</a></div>' +
+          '<a class="uline" href="' + catUrl(slug) + '" style="font-size:13px">View all \u2192</a></div>' +
           '<div class="row-list">' + (items.length ? items.map(function (s) {
             return '<div class="row" style="grid-template-columns:1fr auto"><div><span class="cat-label">' + esc(s.subCategory || s.category) + '</span>' +
               '<h3 style="font-size:18px"><a href="' + storyUrl(s) + '">' + esc(plainHead(s.headline)) + '</a></h3></div>' +
@@ -780,7 +781,7 @@
     }
 
     var html = '<div class="progress-bar" id="progress"></div><div class="article-layout"><div class="article-wrap">';
-    html += '<p class="breadcrumb"><a href="index.html">Home</a> \u2192 <a href="category.html?cat=' + catSlug(s.category) + '">' + esc(s.category) + '</a></p>';
+    html += '<p class="breadcrumb"><a href="/">Home</a> \u2192 <a href="' + catUrl(catSlug(s.category)) + '">' + esc(s.category) + '</a></p>';
     html += '<span class="cat-label">' + esc(s.category) + (s.subCategory ? ' \u00B7 ' + esc(s.subCategory) : '') + '</span>';
     html += '<h1 class="article-headline">' + hlHead(s.headline) + '</h1>';
     html += '<p class="article-lede">' + esc(s.lede) + '</p>';
@@ -843,7 +844,7 @@
 
     html += '<div class="related"><h2>' + relatedTitle + '</h2><div class="compact-grid">' + related.map(compactCardHTML).join('') + '</div></div>';
 
-    html += '<div style="margin-top:56px">' + newsletterBannerHTML('newsletter-foot') + '</div>';
+    html += '<div class="article-foot-news" style="margin-top:56px">' + newsletterBannerHTML('newsletter-foot') + '</div>';
     html += '<p class="caption" style="margin-top:24px"><a class="uline" href="corrections.html">See correction history</a></p>';
     html += '</div>'; /* /article-wrap */
     html += asideHTML(s, stories);
@@ -930,7 +931,11 @@
   function renderCategory() {
     var stories = allStories();
     var params = new URLSearchParams(location.search);
-    var slug = params.get('cat') || 'medicine';
+    var slug = params.get('cat');
+    if (!slug) {
+      slug = (location.pathname.indexOf('/category/') !== -1) ? cleanSlug(location.pathname) : 'medicine';
+    }
+    if (window.__LUMEN_CAT__) slug = window.__LUMEN_CAT__;
     var cat = CATEGORIES.filter(function (c) { return c.slug === slug; })[0] || CATEGORIES[0];
     mountChrome(cat.slug, stories);
     document.title = cat.name + ' \u00B7 Lumen';
@@ -950,7 +955,7 @@
       '<p class="stat">' + esc(cat.stat) + ' \u00B7 ' + inCat.length + ' ' + (inCat.length === 1 ? 'story' : 'stories') + '</p></header>' +
       '<div class="filter-bar"><span class="label">Filter by impact</span>' +
       filters.map(function (f) {
-        return '<a class="chip' + (impactMin === f.v ? ' active' : '') + '" href="category.html?cat=' + cat.slug + (f.v ? '&impact=' + f.v : '') + '">' + f.label + '</a>';
+        return '<a class="chip' + (impactMin === f.v ? ' active' : '') + '" href="' + catUrl(cat.slug) + (f.v ? '?impact=' + f.v : '') + '">' + f.label + '</a>';
       }).join('') +
       '<button class="chip" id="follow-btn" style="margin-left:auto">Follow this topic</button></div>';
 
