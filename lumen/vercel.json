@@ -1,7 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
+  "buildCommand": "node build.js",
+  "outputDirectory": ".",
   "rewrites": [
     { "source": "/", "destination": "/index.html" }
+  ],
+  "redirects": [
+    { "source": "/story.html", "has": [{ "type": "query", "key": "slug", "value": "(?<s>.*)" }], "destination": "/story/:s", "permanent": true }
   ]
 }
