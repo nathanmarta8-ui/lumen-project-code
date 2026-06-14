@@ -393,6 +393,35 @@ a:hover .arrow-btn, .arrow-btn:hover { background: var(--accent-dark); transform
 ------------------------------------------------------------ */
 .progress-bar { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: var(--accent); z-index: 200; }
 .article-wrap { max-width: var(--article-width); margin: 0 auto; padding: 48px 24px; }
+
+/* contained two-column article + sidebar (generous outer margins kept) */
+.article-layout {
+  max-width: 1060px; margin: 0 auto;
+  display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 48px;
+}
+.article-layout .article-wrap { max-width: none; margin: 0; padding: 48px 0 48px 16px; }
+.article-aside { padding-top: 48px; }
+.aside-sticky { position: sticky; top: 84px; display: flex; flex-direction: column; gap: 24px; }
+.aside-sticky .tile-news { margin: 0; }
+.aside-block { }
+.aside-title {
+  font-family: var(--font-body); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border-strong);
+}
+.aside-list { display: flex; flex-direction: column; }
+.aside-item {
+  display: block; padding: 14px 0; border-bottom: 1px solid var(--border);
+  color: var(--text-primary); transition: opacity 0.2s var(--ease);
+}
+.aside-item:last-child { border-bottom: none; }
+.aside-item:hover { opacity: 0.72; }
+.aside-item .cat-label { display: block; margin-bottom: 5px; }
+.aside-head {
+  display: block; font-family: var(--font-display); font-weight: 700;
+  font-size: 16px; line-height: 1.25; color: var(--text-primary); margin-bottom: 6px;
+}
+.aside-tag { display: block; font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
 .breadcrumb { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
 .breadcrumb a { color: var(--text-muted); }
 .breadcrumb a:hover { color: var(--accent); }
@@ -601,6 +630,10 @@ footer.site-footer { border-top: 1px solid var(--border-strong); padding: 48px 0
   .lead h1 { font-size: clamp(32px, 7vw, 44px); }
   .compact-grid, .cat-grid { grid-template-columns: 1fr 1fr; }
   .tile-strip { grid-template-columns: 1fr 1fr; }
+  .article-layout { grid-template-columns: 1fr; gap: 0; max-width: var(--article-width); }
+  .article-layout .article-wrap { padding: 48px 24px; }
+  .article-aside { padding-top: 0; padding: 0 24px 48px; }
+  .aside-sticky { position: static; gap: 32px; }
 }
 
 @media (max-width: 768px) {
