@@ -109,6 +109,7 @@ function storyHTML(s) {
   bodyInner.push('<p class="article-lede">' + esc(s.lede) + '</p>');
   bodyInner.push('<div class="article-meta-row"><div class="meta">' +
     '<span class="src-tag">' + esc(s.sourceType || 'Peer-reviewed') + '</span><span class="sep"></span>' +
+    '<span class="byline">By ' + esc(realAuthor(s)) + '</span><span class="sep"></span>' +
     '<span>' + esc(fmtDate(s.publishDate)) + '</span><span class="sep"></span>' +
     '<span>' + esc(s.readTime || 3) + ' min read</span></div></div>');
   if (s.heroImage) {
