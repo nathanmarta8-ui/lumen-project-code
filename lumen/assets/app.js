@@ -21,7 +21,7 @@
      Leave both '' to show the local placeholder form.
   ------------------------------------------------------------ */
   var CONFIG = {
-  newsletterFormAction: 'https://buttondown.com/stanley_martanegara',
+  newsletterFormAction: 'https://buttondown.com/api/emails/embed-subscribe/stanley_martanegara',
   newsletterEmailField: 'email',
   newsletterEmbedUrl: '',
   siteUrl: 'https://readlumen.site'
