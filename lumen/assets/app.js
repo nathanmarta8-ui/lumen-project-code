@@ -21,11 +21,11 @@
      Leave both '' to show the local placeholder form.
   ------------------------------------------------------------ */
   var CONFIG = {
-  newsletterFormAction: 'https://buttondown.com/api/emails/embed-subscribe/stanley_martanegara',
-  newsletterEmailField: 'email',
-  newsletterEmbedUrl: '',
-  siteUrl: 'https://readlumen.site'
-};
+    newsletterFormAction: '',
+    newsletterEmailField: 'email_address',
+    newsletterEmbedUrl: '',
+    siteUrl: 'https://readlumen.site'
+  };
 
   var CATEGORIES = [
     { name: 'Medicine',       slug: 'medicine',       summary: 'Approvals, scale milestones and trial results at the inflection point — the moment research becomes treatment.', stat: 'Tracking the moments care actually changes' },
@@ -97,6 +97,12 @@
     return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   }
   function num(n) { return Number(n || 0).toLocaleString('en-US'); }
+
+  /* author display: masthead placeholders ("Lumen …") show as the named publisher */
+  function realAuthor(s) {
+    var a = ((s && s.author) || '').trim();
+    return (!a || a.toLowerCase().indexOf('lumen') === 0) ? 'Nathan Stanley Martanegara' : a;
+  }
 
   /* slug hygiene: a data-entry slug like "/story/foo" or "foo/" can't break URLs */
   function cleanSlug(s) {
@@ -686,6 +692,7 @@
     html += '<p class="article-lede">' + esc(s.lede) + '</p>';
     html += '<div class="article-meta-row"><div class="meta">' +
       '<span class="src-tag">' + esc(s.sourceType) + '</span><span class="sep"></span>' +
+      '<span class="byline">By ' + esc(realAuthor(s)) + '</span><span class="sep"></span>' +
       '<span>' + fmtDate(s.publishDate) + '</span><span class="sep"></span>' +
       '<span>' + esc(s.readTime || 3) + ' min read</span><span class="sep"></span>' +
       '<span class="impact"><span class="impact-dot"></span>Impact ' + esc(s.impact) + '/10</span></div></div>';
