@@ -233,6 +233,39 @@
     return '<div class="tile-data reveal">' + (href ? '<a href="' + href + '">' + inner + '</a>' : inner) + '</div>';
   }
 
+  /* "Breakthroughs you might've missed": exclude the current story, rank by impact
+     (favoring stronger, older-but-solid pieces over the freshest), take n */
+  function missedBreakthroughs(current, all, n) {
+    return all.filter(function (x) { return cleanSlug(x.slug) !== cleanSlug(current.slug); })
+      .slice()
+      .sort(function (a, b) {
+        var d = (Number(b.impact) || 0) - (Number(a.impact) || 0);
+        return d || (new Date(a.publishDate) - new Date(b.publishDate));
+      })
+      .slice(0, n || 4);
+  }
+  function asideItemHTML(s) {
+    var tag = (s.journal ? esc(s.journal) + ' \u00B7 ' : '') + 'Impact ' + esc(s.impact) + '/10';
+    return '<a class="aside-item" href="' + storyUrl(s) + '">' +
+      '<span class="cat-label">' + esc(s.category) + '</span>' +
+      '<span class="aside-head">' + esc(plainHead(s.headline)) + '</span>' +
+      '<span class="aside-tag">' + tag + '</span></a>';
+  }
+  function asideHTML(current, stories) {
+    var missed = missedBreakthroughs(current, stories, 4);
+    return '<aside class="article-aside">' +
+      '<div class="aside-sticky">' +
+      '<div class="tile-news" id="newsletter">' +
+        '<span class="cat-label">The newsletter</span>' +
+        '<h3>Understand the future in 5 minutes.</h3>' +
+        '<p>Tuesday and Friday. No noise. No hype.</p>' +
+        newsletterFormHTML() + '</div>' +
+      (missed.length ? '<section class="aside-block"><h4 class="aside-title">Breakthroughs you might\u2019ve missed</h4>' +
+        '<div class="aside-list">' + missed.map(asideItemHTML).join('') + '</div></section>' : '') +
+      '<div class="ad-slot" data-slot="article-sidebar"></div>' +
+      '</div></aside>';
+  }
+
   /* ---------- chrome ---------- */
   function navHTML(active) {
     var links = CATEGORIES.map(function (c) {
@@ -685,7 +718,7 @@
       relatedTitle = 'More from Lumen';
     }
 
-    var html = '<div class="progress-bar" id="progress"></div><div class="article-wrap">';
+    var html = '<div class="progress-bar" id="progress"></div><div class="article-layout"><div class="article-wrap">';
     html += '<p class="breadcrumb"><a href="index.html">Home</a> \u2192 <a href="category.html?cat=' + catSlug(s.category) + '">' + esc(s.category) + '</a></p>';
     html += '<span class="cat-label">' + esc(s.category) + (s.subCategory ? ' \u00B7 ' + esc(s.subCategory) : '') + '</span>';
     html += '<h1 class="article-headline">' + hlHead(s.headline) + '</h1>';
@@ -749,9 +782,11 @@
 
     html += '<div class="related"><h2>' + relatedTitle + '</h2><div class="compact-grid">' + related.map(compactCardHTML).join('') + '</div></div>';
 
-    html += '<div style="margin-top:56px">' + newsletterBannerHTML('newsletter') + '</div>';
+    html += '<div style="margin-top:56px">' + newsletterBannerHTML('newsletter-foot') + '</div>';
     html += '<p class="caption" style="margin-top:24px"><a class="uline" href="corrections.html">See correction history</a></p>';
-    html += '</div>';
+    html += '</div>'; /* /article-wrap */
+    html += asideHTML(s, stories);
+    html += '</div>'; /* /article-layout */
 
     root.innerHTML = html;
 
