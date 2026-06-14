@@ -59,7 +59,7 @@ const CAT_SLUGS = {
   'Mental Health': 'mental-health'
 };
 function catSlug(name) { return CAT_SLUGS[name] || 'medicine'; }
-function realAuthor(s) { var a = (s.author || '').trim(); return (!a || a.toLowerCase().indexOf('lumen') === 0) ? AUTHOR : a; }
+function realAuthor(s) { var a = (s.author || '').trim(); var low = a.toLowerCase(); return (!a || low.indexOf('lumen') === 0 || low.indexOf('nathan stanley') === 0) ? AUTHOR : a; }
 
 /* "Breakthroughs you might've missed" — baked into static HTML for SEO/GEO internal links */
 function missedBreakthroughs(current, all, n) {
@@ -179,7 +179,7 @@ function storyHTML(s, all) {
 <meta name="twitter:image" content="${esc(img)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="alternate" type="application/rss+xml" title="Lumen RSS" href="/feed.xml">
 <link rel="stylesheet" href="/assets/styles.css">
 <script type="application/ld+json">${jsonEsc(JSON.stringify(ld))}</script>
