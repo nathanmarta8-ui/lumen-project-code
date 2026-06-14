@@ -445,6 +445,12 @@
       if (bd) {
         var sink = document.querySelector('iframe[name="lumen-bd-sink"]');
         var proof = bd.nextElementSibling;
+        var btn = bd.querySelector('button[type="submit"]');
+        if (btn && !btn.disabled) {
+          btn.disabled = true;
+          btn.classList.add('loading');
+          btn.innerHTML = '<span class="btn-spinner" aria-hidden="true"></span><span>Subscribing\u2026</span>';
+        }
         if (sink) {
           sink.addEventListener('load', function () {
             bd.outerHTML = '<p class="ok">You\u2019re on the list. Check your inbox to confirm \u2014 then watch for Tuesday &amp; Friday issues.</p>';
