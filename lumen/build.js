@@ -61,8 +61,30 @@ const CAT_SLUGS = {
 function catSlug(name) { return CAT_SLUGS[name] || 'medicine'; }
 function realAuthor(s) { var a = (s.author || '').trim(); return (!a || a.toLowerCase().indexOf('lumen') === 0) ? AUTHOR : a; }
 
+/* "Breakthroughs you might've missed" — baked into static HTML for SEO/GEO internal links */
+function missedBreakthroughs(current, all, n) {
+  return all.filter(x => cleanSlug(x.slug) !== cleanSlug(current.slug))
+    .slice()
+    .sort((a, b) => ((Number(b.impact) || 0) - (Number(a.impact) || 0)) || (new Date(a.publishDate) - new Date(b.publishDate)))
+    .slice(0, n || 4);
+}
+function asideStaticHTML(current, all) {
+  const missed = missedBreakthroughs(current, all, 4);
+  const items = missed.map(s => {
+    const tag = (s.journal ? esc(s.journal) + ' &#183; ' : '') + 'Impact ' + esc(s.impact) + '/10';
+    return '<a class="aside-item" href="/story/' + cleanSlug(s.slug) + '">' +
+      '<span class="cat-label">' + esc(s.category) + '</span>' +
+      '<span class="aside-head">' + esc(plainHead(s.headline)) + '</span>' +
+      '<span class="aside-tag">' + tag + '</span></a>';
+  }).join('');
+  return '<aside class="article-aside"><div class="aside-sticky">' +
+    (items ? '<section class="aside-block"><h4 class="aside-title">Breakthroughs you might&#8217;ve missed</h4><div class="aside-list">' + items + '</div></section>' : '') +
+    '<div class="ad-slot" data-slot="article-sidebar"></div>' +
+    '</div></aside>';
+}
+
 /* ---------- per-story page ---------- */
-function storyHTML(s) {
+function storyHTML(s, all) {
   const slug = cleanSlug(s.slug);
   const url = SITE + '/story/' + slug;
   const title = plainHead(s.headline);
@@ -165,7 +187,7 @@ function storyHTML(s) {
 </head>
 <body>
 <div id="chrome"></div>
-<main id="page"><div class="article-wrap">${bodyInner.join('\n')}</div></main>
+<main id="page"><div class="article-layout"><div class="article-wrap">${bodyInner.join("\n")}</div>${asideStaticHTML(s, all)}</div></main>
 <div id="site-footer"></div>
 <script>window.__LUMEN_SLUG__=${JSON.stringify(slug)};</script>
 <script src="/data/stories.js"></script>
@@ -220,7 +242,7 @@ function build() {
     if (!slug) return;
     const dir = path.join(ROOT, 'story', slug);
     fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(path.join(dir, 'index.html'), storyHTML(s));
+    fs.writeFileSync(path.join(dir, "index.html"), storyHTML(s, stories));
     n++;
   });
   fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), buildSitemap(stories));
