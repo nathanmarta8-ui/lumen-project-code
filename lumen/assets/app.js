@@ -21,11 +21,11 @@
      Leave both '' to show the local placeholder form.
   ------------------------------------------------------------ */
   var CONFIG = {
-    newsletterFormAction: '',
-    newsletterEmailField: 'email_address',
-    newsletterEmbedUrl: '',
-    siteUrl: 'https://readlumen.site'
-  };
+  newsletterFormAction: 'https://buttondown.com/api/emails/embed-subscribe/stanley_martanegara',
+  newsletterEmailField: 'email',
+  newsletterEmbedUrl: '',
+  siteUrl: 'https://readlumen.site'
+};
 
   var CATEGORIES = [
     { name: 'Medicine',       slug: 'medicine',       summary: 'Approvals, scale milestones and trial results at the inflection point — the moment research becomes treatment.', stat: 'Tracking the moments care actually changes' },
