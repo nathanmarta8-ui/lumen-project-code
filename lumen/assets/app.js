@@ -21,14 +21,10 @@
      Leave both '' to show the local placeholder form.
   ------------------------------------------------------------ */
   var CONFIG = {
-    newsletterFormAction: '',
-    newsletterEmailField: 'email_address',
+    newsletterFormAction: 'https://buttondown.com/api/emails/embed-subscribe/stanley_martanegara',
+    newsletterEmailField: 'email',
     newsletterEmbedUrl: '',
     siteUrl: 'https://readlumen.site',
-    /* Supabase (reactions). Project Settings → API:
-       supabaseUrl = Project URL (https://xxxx.supabase.co)
-       supabaseAnonKey = the "anon"/"publishable" public key — safe to expose here,
-       it is protected by Row Level Security. NEVER paste the service_role/secret key. */
     supabaseUrl: 'https://nfwaqoprnbjgrozasmyb.supabase.co',
     supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5md2Fxb3BybmJqZ3JvemFzbXliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDA1MzIsImV4cCI6MjA5NzAxNjUzMn0.JVJ9QjvKUTZnI-9ZL_ujH-TChxkgfquCzrQnxXKRyz0'
   };
@@ -214,10 +210,11 @@
   /* ---------- newsletter ---------- */
   function newsletterFormHTML() {
     if (CONFIG.newsletterFormAction) {
-      return '<form class="newsletter-form" action="' + esc(CONFIG.newsletterFormAction) + '" method="post" target="_blank" rel="noopener">' +
-        '<input type="email" name="' + esc(CONFIG.newsletterEmailField || 'email_address') + '" required placeholder="you@example.com" aria-label="Email address">' +
+      return '<form class="newsletter-form" data-bd action="' + esc(CONFIG.newsletterFormAction) + '" method="post" target="lumen-bd-sink">' +
+        '<input type="email" name="' + esc(CONFIG.newsletterEmailField || 'email') + '" required placeholder="you@example.com" aria-label="Email address">' +
         '<button class="btn" type="submit">Get the signal \u2192</button></form>' +
-        '<p class="proof">Confirmation opens in a new tab. No spam. Unsubscribe anytime.</p>';
+        '<p class="proof">No spam. Unsubscribe anytime.</p>' +
+        '<iframe name="lumen-bd-sink" class="bd-sink" title="subscribe" aria-hidden="true" tabindex="-1"></iframe>';
     }
     if (CONFIG.newsletterEmbedUrl) {
       return '<iframe class="nl-embed" src="' + esc(CONFIG.newsletterEmbedUrl) + '" title="Subscribe to the Lumen newsletter" loading="lazy"></iframe>';
@@ -441,8 +438,22 @@
       });
     }
 
-    /* newsletter placeholder form handler */
+    /* newsletter form handler */
     document.addEventListener('submit', function (e) {
+      /* real Buttondown form: posts to hidden iframe; show success on its response */
+      var bd = e.target.closest('[data-bd]');
+      if (bd) {
+        var sink = document.querySelector('iframe[name="lumen-bd-sink"]');
+        var proof = bd.nextElementSibling;
+        if (sink) {
+          sink.addEventListener('load', function () {
+            bd.outerHTML = '<p class="ok">You\u2019re on the list. Check your inbox to confirm \u2014 then watch for Tuesday &amp; Friday issues.</p>';
+            if (proof && proof.classList && proof.classList.contains('proof')) proof.remove();
+          }, { once: true });
+        }
+        return; /* let the native POST proceed */
+      }
+      /* placeholder fallback (when no provider is configured) */
       var f = e.target.closest('[data-newsletter]');
       if (!f) return;
       e.preventDefault();
