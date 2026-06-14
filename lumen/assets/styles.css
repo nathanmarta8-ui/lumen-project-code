@@ -142,6 +142,14 @@ mark.hl {
 }
 .btn:hover { background: var(--accent-dark); color: var(--white); transform: translateY(-1px); }
 .btn:active { transform: translateY(0); }
+.btn.loading, .btn:disabled { cursor: default; opacity: 0.85; }
+.btn.loading:hover { transform: none; background: var(--accent); }
+.btn-spinner {
+  width: 14px; height: 14px; display: inline-block; flex: none;
+  border: 2px solid rgba(255, 255, 255, 0.4); border-top-color: var(--white);
+  border-radius: 50%; animation: btn-spin 0.6s linear infinite;
+}
+@keyframes btn-spin { to { transform: rotate(360deg); } }
 .btn-sm { padding: 7px 16px; font-size: 13px; }
 .btn-ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
 .btn-ghost:hover { background: var(--accent-bg); color: var(--accent-dark); }
