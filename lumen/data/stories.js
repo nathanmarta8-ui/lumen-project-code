@@ -1,4 +1,4 @@
-/* LUMEN story data — committed by /api/publish on 2026-06-19T02:49:24.227Z.
+/* LUMEN story data — committed by /api/publish on 2026-06-19T02:52:36.818Z.
    Generated from the admin Publish button; do not hand-edit on main. */
 
 window.LUMEN_DATA = {
@@ -578,12 +578,12 @@ window.LUMEN_DATA = {
       "headline": "A dual-gene therapy for Parkinson's passed its first safety test 10 patients, no dose-limiting toxicities at one year",
       "lede": "In a phase 1 trial of 10 people with moderate-to-advanced Parkinson's, a brain-infused gene therapy caused no dose-limiting toxicities over 12 months. A safety result, not yet proof it eases symptoms",
       "whyItMatters": "Existing dopamine gene therapies still depend on levodopa; delivering both dopamine-making enzymes at once aims at a brain that makes its own dopamine again.",
-      "realityCheck": "his is a phase 1 safety trial of 10 people with no control group the finding is the absence of serious harm, not proof the therapy works. Any motor improvements at this stage are exploratory. The therapy requires bilateral brain surgery to deliver",
+      "realityCheck": "This is a phase 1 safety trial of 10 people with no control group the finding is the absence of serious harm, not proof the therapy works. Any motor improvements at this stage are exploratory. The therapy requires bilateral brain surgery to deliver",
       "bodyHtml": "<p><b>What changed</b>. Parkinson's disease destroys the brain cells that make dopamine, the signaling molecule that allows smooth, controlled movement. The standard treatment, levodopa, gives the brain a raw material to make dopamine&nbsp; but as the disease advances, fewer cells remain to do the conversion, and the drug's effect becomes erratic. Several gene therapies have tried to restore one enzyme in that production line, AADC, but those still depend on patients taking levodopa. This trial tested a different idea: deliver two genes at once.</p><p><b>The science</b>. The therapy, BBM-P002 (from Belief BioMed), uses a newly engineered delivery vector — an adeno-associated virus called AAVT42 to carry the genes for both rate-limiting enzymes in dopamine synthesis, tyrosine hydroxylase (TH) and AADC, into the putamen, a movement-control hub deep in the brain. Together, the two enzymes give brain cells the machinery to make dopamine on their own, the aim being dopamine production that no longer depends on an external drug. Surgeons infused it into both sides of the brain across four escalating doses. The trial was conducted at Ruijin Hospital, Shanghai Jiao Tong University School of Medicine.</p><p><b>The data.</b> Across all 10 participants, the trial met its primary goal: a favorable safety and tolerability profile at 12 months. There were no dose-limiting toxicities and no serious adverse events judged related to the therapy. The researchers also reported no systemic toxicity and no clinically meaningful immune reaction against the vector.</p><p><b>What's next. </b>Clearing safety is the gate that lets a brain-infused gene therapy advance to larger, controlled trials designed to measure whether it actually eases symptoms and reduces dependence on levodopa. The genuinely new element here co-delivering both dopamine-making enzymes from a single vector is what later studies will have to convert from \"well tolerated\" into \"demonstrably better for patients.\" For now, the result is a green light to continue, not a destination.</p>",
       "category": "Biotechnology",
       "subCategory": "",
       "readTime": 2,
-      "publishDate": "2026-06-17T23:25:00.000Z",
+      "publishDate": "2026-06-17T16:25:00.000Z",
       "author": "Nathan Stanley",
       "region": "Global",
       "pullQuote": "",
