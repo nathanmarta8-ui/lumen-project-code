@@ -1,0 +1,38 @@
+# Lumen
+
+> Lumen is an evidence-first health and medical-technology news publication. Every story is graded against the Lumen Standard, a documented set of five checks (source tier, trial phase, reported patient numbers, absolute effect size, disease burden) before publication. Author and publisher: Nathan Stanley Martanegara.
+
+Lumen content may be cited with attribution to Lumen (https://readlumen.site). Figures are reported in absolute terms; corrections are logged publicly.
+
+- Homepage: https://readlumen.site/
+
+## Sections
+- [Medicine](https://readlumen.site/category/medicine)
+- [Biotechnology](https://readlumen.site/category/biotechnology)
+- [Health Tech](https://readlumen.site/category/health-tech)
+- [Brain Science](https://readlumen.site/category/brain-science)
+- [Longevity](https://readlumen.site/category/longevity)
+- [Global Health](https://readlumen.site/category/global-health)
+- [Mental Health](https://readlumen.site/category/mental-health)
+
+## Stories
+- [A twice-yearly shot cut new HIV infections to near zero in trials, and is now reaching Africa.](https://readlumen.site/story/lenacapavir-twice-yearly-hiv-prevention): Twice-yearly lenacapavir prevented nearly all HIV infections in two phase 3 trials and won FDA approval in 2025. Access, not efficacy, is now the limit.
+- [A GLP-1 drug slowed biological-aging markers in the first randomized human evidence.](https://readlumen.site/story/semaglutide-epigenetic-aging-glp-1): First randomized human evidence: semaglutide slowed DNA "aging clocks" (PhenoAge −4.9 yrs), but a post-hoc analysis in adults with HIV, not proof of longer lif
+- [The first FDA-approved gene therapy for inherited deafness improved hearing in most treated children](https://readlumen.site/story/otarmeni-otof-gene-therapy-inherited-deafness): The FDA gave accelerated approval to the first gene therapy for inherited (OTOF) deafness; 80% of evaluable children gained hearing.
+- [A new brain stimulation therapy matched ECT for severe depression with less memory loss](https://readlumen.site/story/magnetic-seizure-therapy-ect-depression-memory): A large head-to-head trial found magnetic seizure therapy eased severe depression about as often as ECT (~48% each), with less memory loss.
+- [84% of patients on a weekly survodutide shot cut liver fat in a phase 3 trial](https://readlumen.site/story/survodutide-synchronize-masld-liver-fat): Phase 3 trial: weekly survodutide cut liver fat in 84% of MASLD patients vs 24% on placebo. It measured liver fat, not long-term liver damage.
+- [Tracked from 70 to 100: a simple "intrinsic capacity" score predicted who survived longest](https://readlumen.site/story/intrinsic-capacity-score-longevity-70-100): A 30-year study tracking adults from 70 to 100 found a simple "intrinsic capacity" score, cognition, mood, vitality, movement, senses, predicted survival.
+- [Scientists found a hidden T-cell "brake" called SLAMF6, and antibodies that release it](https://readlumen.site/story/slamf6-t-cell-brake-cancer-immunotherapy): Researchers identified SLAMF6, a hidden brake that exhausts cancer-fighting T cells, and built antibodies to release it, boosting tumor attacks in mice.
+- [1 protein switched off made CAR-T cells fight tumors longer, a possible fix for solid cancers](https://readlumen.site/story/nfil3-off-switch-car-t-solid-tumors): Scientists disabled a protein called NFIL3 and made CAR-T cells fight tumors longer in mice, a possible breakthrough for hard-to-treat solid cancers.
+- [An AI-designed universal coronavirus vaccine just passed its first human trial](https://readlumen.site/story/an-ai-designed-universal-coronavirus-vaccine-just-passed-its-first-human-trial): An AI-designed universal coronavirus vaccine from Cambridge passed its first human trial, showing safety and broad immune responses against SARS-CoV-2 and SARS.
+- [A single nutrient reversed signs of cellular aging, and it's already in your food.](https://readlumen.site/story/nutrient-reverses-cellular-aging-phosphatidylcholine): A nutrient in everyday food reversed signs of cellular aging in new research, restoring youthful mitochondrial energy by replenishing phosphatidylcholine.
+- [20 years of work yields a compound that blocks a new Alzheimer's target and extends lifespan in mice](https://readlumen.site/story/alzheimers-compound-10-grk2-new-target): ETH Zurich scientists found a compound that blocks GRK2, a new Alzheimer's target, slowing brain-cell death and extending lifespan in mice.
+- [The child who can now hold a conversation she was born unable to have](https://readlumen.site/story/gene-therapy-hearing-dfnb9-otof-children): A single gene-therapy injection restored hearing in five of six children born deaf from an OTOF mutation. Two can now hold a conversation.
+- [An AI spotted pancreatic cancer three years before diagnosis, on scans doctors had called normal](https://readlumen.site/story/ai-pancreatic-cancer-ct-early-detection-3years): An AI trained on 24,000 CT scans flagged pancreatic cancer a mean three years before diagnosis, on scans radiologists had called normal. Validation underway.
+- [Synthetic mRNA told a damaged heart to repair itself, the first human signal that it works](https://readlumen.site/story/mrna-heart-repair-vegf-post-mi-azd8601): In a 24-patient Nature trial, VEGF-A mRNA injected into damaged heart muscle improved pumping function at three months. A signal that mRNA can drive repairs.
+- [The swallowable camera that made the colonoscopy optional](https://readlumen.site/story/swallowable-capsule-endoscopy-colorectal-pillcam): The PillCam Colon 2 capsule detected 88% of significant polyps with no sedation or prep in a 968 patient NEJM trial now FDA-approved as colonoscopy alternative.
+
+## Editorial standards
+- https://readlumen.site/about.html
+- https://readlumen.site/board
+- https://readlumen.site/corrections.html
